@@ -7,55 +7,79 @@
 # documentation.
 
 # Tên workflow – sẽ hiển thị trong tab Actions của GitHub
+# ================================
+# CI WORKFLOW FOR JAVA ANT PROJECT
+# Using Ant + JUnit 4
+# ================================
+
+# Tên workflow – hiển thị trong tab Actions
 name: CI with GitHub Actions using Ant and JUnit | © 2025 by DinhLoii
 
-# Điều kiện kích hoạt workflow
+# Khi nào workflow này được chạy
 on:
   push:
-    branches: [ "main" ]          # Chạy CI khi có ai push code lên nhánh main
+    branches: [ "main" ]          # Chạy khi có push code lên nhánh main
   pull_request:
-    branches: [ "main" ]          # Chạy CI khi có pull request vào nhánh main
+    branches: [ "main" ]          # Chạy khi có pull request vào nhánh main
 
-# Một workflow gồm một hoặc nhiều job
+# Một workflow có thể có nhiều job
+# Ở đây chỉ cần 1 job build
 jobs:
-  build:                          # Job tên là "build"
-    
-    # Chỉ định hệ điều hành cho máy ảo GitHub cung cấp
-    runs-on: ubuntu-latest        # Ubuntu Linux (phổ biến, ổn định cho Java CI)
+  build:
+    # GitHub cấp cho ta một máy ảo chạy Ubuntu Linux
+    runs-on: ubuntu-latest
 
-    # Các bước (steps) sẽ được chạy tuần tự
+    # Các bước sẽ được chạy tuần tự
     steps:
 
-    # 1. Lấy source code từ repository về máy ảo
+    # --------------------------------
+    # BƯỚC 1: LẤY SOURCE CODE
+    # --------------------------------
     - name: Check out repository
       uses: actions/checkout@v4
+      # Lấy toàn bộ source code từ GitHub repo
+      # để máy ảo có code mà build
 
-    # 2. Cài đặt Java Development Kit (JDK) để build project
+    # --------------------------------
+    # BƯỚC 2: CÀI ĐẶT JDK
+    # --------------------------------
     - name: Set up JDK 21 (LTS)
       uses: actions/setup-java@v4
       with:
-        java-version: '21'        # Dùng JDK 21 – bản LTS, ổn định
-        distribution: 'temurin'  # Dùng Eclipse Temurin (OpenJDK được GitHub khuyến nghị)
+        java-version: '21'        # Dùng Java 21 – bản LTS, ổn định
+        distribution: 'temurin'  # Eclipse Temurin (OpenJDK chính thức)
 
-    # 3. Build project bằng Apache Ant
-    # Ant sẽ đọc file build.xml (NetBeans tự sinh)
-    # Quá trình build sẽ tự động chạy JUnit nếu được cấu hình trong build.xml
+    # --------------------------------
+    # BƯỚC 3: BUILD + TEST BẰNG ANT
+    # --------------------------------
     - name: Build project with Ant
       run: ant -noinput -buildfile build.xml
+      # Ant sẽ đọc file build.xml (NetBeans sinh ra)
+      # Quá trình này:
+      #  - Compile source code
+      #  - Compile test
+      #  - Chạy JUnit 4 tests
+      # Nếu test FAIL → CI FAIL
 
-    # 4. Chuẩn bị thư mục chứa file build (.jar) để upload
+    # --------------------------------
+    # BƯỚC 4: CHUẨN BỊ FILE BUILD (.jar)
+    # --------------------------------
     - name: Prepare build artifacts
       run: |
-        mkdir -p staging           # Tạo thư mục staging
+        mkdir -p staging
         cp dist/*.jar staging || echo "No JAR file found"
-        # Tránh lỗi CI nếu vì lý do nào đó chưa sinh ra file .jar
+      # dist/*.jar là output mặc định của Ant (NetBeans)
+      # staging là thư mục trung gian để upload artifact
 
-    # 5. Upload file .jar để có thể download trong GitHub Actions
+    # --------------------------------
+    # BƯỚC 5: UPLOAD ARTIFACT
+    # --------------------------------
     - name: Upload JAR artifact
       uses: actions/upload-artifact@v4
       with:
-        name: math-util-ant-build  # Tên artifact hiển thị trên GitHub
+        name: math-util-ant-build  # Tên file build hiển thị trên GitHub
         path: staging              # Thư mục chứa file .jar
+
 
 
 # End of CI workflow file. 
