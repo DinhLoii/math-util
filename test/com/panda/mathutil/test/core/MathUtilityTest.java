@@ -13,35 +13,30 @@ import static org.junit.Assert.*;
  * @author LoiDinh
  */
 public class MathUtilityTest {
-    
+
     public MathUtilityTest() {
     }
-    
+
     //Đây là class sẽ sử dụng các hàm của thư viện/framwork JUnit
     //để kiểm thử/Kiểm tra code chính
     // -> class core.MathUtil
-    
     //@Test JUnit sẽ phối hợp với JVM để chạy hàm này
     //@Test phía hậu trường chính là public static void main()
     //Có nhiều @Test ứng với nhiều testcase khác nhau để kiểm thử
     @Test
     public void testGetFactorialGivenRightArgumentReturnsWell() {
-        int n = 0; 
+        int n = 0;
         long expected = 1;
-        
+
         long actual = MathUtil.getFactorial(n);
-        
+
         // so sách dùng framwork: expected vs actual 
-        
         assertEquals(expected, actual);
     }
-    
-    @Test//(expected = NumberFormatException.class)
-    public void testGetFactorialGivenRightArgumentThrowsException() {
-        MathUtil.getFactorial(5);
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetFactorialGivenWrongArgumentThrowsException() {
+        MathUtil.getFactorial(-100);
     }
-    
-    
-    
+
 }
- 
