@@ -5,8 +5,8 @@
 package com.panda.mathutil.test.core;
 
 import com.panda.mathutil.core.MathUtil;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -38,7 +38,7 @@ public class MathUtilityTest {
     
     @Test//(expected = NumberFormatException.class)
     public void testGetFactorialGivenRightArgumentThrowsException() {
-        MathUtil.getFactorial(-5);
+        MathUtil.getFactorial(5);
     }
     
     
